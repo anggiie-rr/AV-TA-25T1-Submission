@@ -1,0 +1,17 @@
+cmake_minimum_required(VERSION 3.8)
+project(nmp25)
+
+enable_testing()
+
+if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
+  add_compile_options(-Wall -Wextra -Wpedantic -lpthread)
+endif()
+
+# Add Google Test and Google Mock
+find_package(GTest REQUIRED)
+find_package(GMock REQUIRED)
+
+# Add Question 4 executable
+add_executable(Question-4-out Question-4.cc)
+target_link_libraries(Question-4-out GTest::GTest GTest::GMock pthread)
+add_test(question-4 Question-4-out)
