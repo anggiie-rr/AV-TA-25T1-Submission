@@ -1,0 +1,36 @@
+mkdir build
+cd build
+cmake ..
+-- The C compiler identification is GNU 9.4.0
+-- The CXX compiler identification is GNU 9.4.0
+-- Check for working C compiler: /usr/bin/cc
+-- Check for working C compiler: /usr/bin/cc -- works
+-- Detecting C compiler ABI info
+-- Detecting C compiler ABI info - done
+-- Detecting C compile features
+-- Detecting C compile features - done
+-- Check for working CXX compiler: /usr/bin/c++
+-- Check for working CXX compiler: /usr/bin/c++ -- works
+-- Detecting CXX compiler ABI info
+-- Detecting CXX compiler ABI info - done
+-- Detecting CXX compile features
+-- Detecting CXX compile features - done
+-- Found GTest: /usr/lib/x86_64-linux-gnu/libgtest.a
+-- Found GMock: /usr/lib/x86_64-linux-gnu/libgmock.a
+-- Configuring done
+-- Generating done
+-- Build files have been written to: /path/to/nmp25-question-4/build
+make
+Scanning dependencies of target Question-4-out
+[ 50%] Building CXX object CMakeFiles/Question-4-out.dir/Question-4.cc.o
+[100%] Linking CXX executable Question-4-out
+[100%] Built target Question-4-out
+[==========] Running 1 test from 1 test suite.
+[----------] Global test environment set-up.
+[----------] 1 test from EventEmitterTest
+[ RUN      ] EventEmitterTest.EmitEventCallsAllObservers
+[       OK ] EventEmitterTest.EmitEventCallsAllObservers (0 ms)
+[----------] 1 test from EventEmitterTest (0 ms total)
+
+[==========] 1 test from 1 test suite ran. (0 ms total)
+[  PASSED  ] 1 test.
