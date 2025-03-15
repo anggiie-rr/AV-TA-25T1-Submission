@@ -1,0 +1,79 @@
+#include <iostream>
+#include <fstream>
+#include <string>
+#include <vector>
+#include <sstream>
+#include <iomanip>
+
+int main() {
+    std::ifstream input("candump.log");
+    std::ofstream output("output.txt");
+
+    if (!input.is_open() || !output.is_open()) {
+        std::cerr << "Error opening files!" << std::endl;
+        return 1;
+    }
+
+    std::string line;
+    while (std::getline(input, line)) {
+        std::istringstream iss(line);
+        std::string timestamp_part, vcan0_part, id_data;
+
+        // Split line into parts
+        if (!(iss >> timestamp_part >> vcan0_part >> id_data)) {
+            continue;
+        }
+
+        // Check if the ID is 705
+        if (id_data.substr(0, 4) != "705#") {
+            continue;
+        }
+
+        // Extract data part
+        size_t hash_pos = id_data.find('#');
+        if (hash_pos == std::string::npos) {
+            continue;
+        }
+        std::string data_str = id_data.substr(hash_pos + 1);
+
+        // Check data length (must be 8 bytes)
+        if (data_str.length() != 16) {
+            continue;
+        }
+
+        // Convert hex string to bytes
+        std::vector<uint8_t> bytes;
+        try {
+            for (size_t i = 0; i < data_str.length(); i += 2) {
+                std::string byte_str = data_str.substr(i, 2);
+                uint8_t byte = static_cast<uint8_t>(std::stoul(byte_str, nullptr, 16));
+                bytes.push_back(byte);
+            }
+        } catch (...) {
+            continue; // Skip invalid hex
+        }
+
+        if (bytes.size() != 8) {
+            continue;
+        }
+
+        // Extract bytes 4 and 5 (0-based index)
+        uint8_t byte4 = bytes[4];
+        uint8_t byte5 = bytes[5];
+
+        // Combine as little-endian 16-bit value
+        uint16_t raw_value = (static_cast<uint16_t>(byte5) << 8) | byte4;
+        double speed = raw_value * 0.1;
+
+        // Format timestamp (remove parentheses)
+        std::string timestamp = timestamp_part.substr(1, timestamp_part.size() - 2);
+
+        // Write to output
+        output << "(" << timestamp << "): " << std::fixed << std::setprecision(1) << speed << std::endl;
+    }
+
+    input.close();
+    output.close();
+
+    return 0;
+}
