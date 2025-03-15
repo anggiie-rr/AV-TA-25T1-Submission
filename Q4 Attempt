@@ -1,0 +1,59 @@
+#include <memory>
+#include <vector>
+#include <gmock/gmock.h>
+#include <gtest/gtest.h>
+
+// Observer Interface
+class Observer {
+public:
+    virtual ~Observer() = default;
+    virtual void onEvent() = 0;
+};
+
+// EventEmitter Class
+class EventEmitter {
+public:
+    void addObserver(std::shared_ptr<Observer> observer) {
+        observers.push_back(observer);
+    }
+
+    void emitEvent() {
+        for (const auto& observer : observers) {
+            observer->onEvent();
+        }
+    }
+
+private:
+    std::vector<std::shared_ptr<Observer>> observers;
+};
+
+// Mock Observer Class
+class MockObserver : public Observer {
+public:
+    MOCK_METHOD(void, onEvent, (), (override));
+};
+
+// Test Case
+TEST(EventEmitterTest, EmitEventCallsAllObservers) {
+    EventEmitter emitter;
+
+    // Create mock observers
+    auto observer1 = std::make_shared<MockObserver>();
+    auto observer2 = std::make_shared<MockObserver>();
+
+    // Add observers to the emitter
+    emitter.addObserver(observer1);
+    emitter.addObserver(observer2);
+
+    // Set expectations
+    EXPECT_CALL(*observer1, onEvent()).Times(1);
+    EXPECT_CALL(*observer2, onEvent()).Times(1);
+
+    // Emit the event
+    emitter.emitEvent();
+}
+
+int main(int argc, char** argv) {
+    ::testing::InitGoogleTest(&argc, argv);
+    return RUN_ALL_TESTS();
+}
